@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Stack & Deployment Guide</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        :root {
+            --fb-blue: #1877f2;
+            --fb-bg: #f0f2f5;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --slate-900: #0f172a;
+            --accent-blue: #3b82f6;
+            
+            /* Method/Concept Colors */
+            --get-color: #22c55e;
+            --post-color: #3b82f6;
+            --put-color: #f97316;
+            --patch-color: #a855f7;
+            --delete-color: #ef4444;
+            --js-color: #facc15;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: white;
+            color: var(--slate-900);
+            line-height: 1.6;
+            padding-bottom: 100px;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+
+        .hero {
+            padding: 80px 0 40px 0;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(241,245,249,0.8)), 
+                        url('https://images.unsplash.com/photo-1558494949-ef010cbdcc48?auto=format&fit=crop&q=80&w=1600');
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-block; padding: 6px 16px; background: var(--fb-blue); color: white;
+            border-radius: 100px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; margin-bottom: 1.5rem;
+        }
+
+        h1 { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; letter-spacing: -1px; }
+
+        /* SIMULATOR STYLE */
+        .simulator-wrapper {
+            display: grid; grid-template-columns: 400px 1fr; background: #ffffff;
+            border: 1px solid var(--slate-200); border-radius: 2rem; overflow: hidden;
+            height: 600px; box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1); margin-bottom: 5rem;
+        }
+
+        .mobile-viewport { background: var(--slate-100); display: flex; align-items: center; justify-content: center; border-right: 1px solid var(--slate-200); }
+        .iphone { width: 260px; height: 520px; background: #000; border-radius: 3rem; padding: 10px; position: relative; border: 3px solid #334155; }
+        .screen { width: 100%; height: 100%; background: var(--fb-bg); border-radius: 2.4rem; overflow: hidden; display: flex; flex-direction: column; }
+        .header-bar { background: white; padding: 25px 14px 10px 14px; display: flex; align-items: center; justify-content: space-between; }
+        .fb-logo { color: var(--fb-blue); font-weight: 800; font-size: 1.1rem; }
+        .like-btn { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.75rem; font-weight: 700; color: #64748b; cursor: pointer; padding: 8px; border-top: 1px solid #f1f5f9; }
+        .like-btn.active { color: var(--fb-blue); }
+
+        .system-viewport { background: #0f172a; position: relative; overflow: hidden; }
+        .node { position: absolute; width: 140px; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 10px; color: white; text-align: center; z-index: 10; font-size: 0.8rem; }
+        .packet { position: absolute; padding: 4px 10px; background: var(--accent-blue); color: white; font-family: 'JetBrains Mono'; font-size: 0.6rem; border-radius: 4px; z-index: 50; transition: all 0.8s ease; }
+        .console { position: absolute; bottom: 0; left: 0; right: 0; height: 150px; background: rgba(2, 6, 23, 0.98); border-top: 3px solid #3b82f6; padding: 15px; font-family: 'JetBrains Mono'; font-size: 0.75rem; overflow-y: auto; color: #e2e8f0; }
+
+        /* CONCEPT CARDS */
+        .section-header { margin: 60px 0 30px 0; border-bottom: 2px solid var(--slate-100); padding-bottom: 15px; text-align: center; }
+        .section-header h2 { font-size: 2rem; font-weight: 800; margin-bottom: 5px; }
+        .section-header p { color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; }
+
+        .cards-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-bottom: 50px; }
+        
+        .card-concept {
+            background: white; border-radius: 16px; border: 2px solid transparent;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow: hidden; transition: transform 0.2s;
+        }
+        .card-concept:hover { transform: translateY(-5px); }
+        .card-header { padding: 12px 15px; font-weight: 800; color: white; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; }
+        .card-body { padding: 15px; font-size: 0.85rem; color: #475569; }
+        .type-badge { font-size: 9px; padding: 2px 6px; background: rgba(0,0,0,0.15); border-radius: 4px; text-transform: uppercase; }
+        .code-box { background: var(--slate-100); padding: 8px; border-radius: 6px; font-family: 'JetBrains Mono'; font-size: 0.7rem; margin-bottom: 10px; color: #1e293b; }
+        .analogy { font-style: italic; color: #64748b; margin-top: 8px; font-size: 0.8rem; display: block; }
+
+        /* Card Color Mapping */
+        .c-get { border-color: var(--get-color); } .c-get .card-header { background: var(--get-color); }
+        .c-post { border-color: var(--post-color); } .c-post .card-header { background: var(--post-color); }
+        .c-put { border-color: var(--put-color); } .c-put .card-header { background: var(--put-color); }
+        .c-patch { border-color: var(--patch-color); } .c-patch .card-header { background: var(--patch-color); }
+        .c-delete { border-color: var(--delete-color); } .c-delete .card-header { background: var(--delete-color); }
+        .c-js { border-color: var(--js-color); } .c-js .card-header { background: var(--js-color); color: #000; }
+
+        /* PIPELINE */
+        .deployment-section { padding: 40px 0; display: flex; flex-direction: column; align-items: center; }
+        .pipeline { position: relative; display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 500px; }
+        .pipeline::before { content: ''; position: absolute; left: 26px; top: 10px; bottom: 10px; width: 2px; background: var(--slate-200); }
+        .step { position: relative; display: flex; align-items: flex-start; gap: 25px; cursor: pointer; }
+        .dot { width: 12px; height: 12px; background: white; border: 3px solid var(--slate-200); border-radius: 50%; margin-left: 21px; margin-top: 22px; flex-shrink: 0; }
+        .step.active .dot { border-color: var(--color); background: var(--color); transform: scale(1.3); }
+        .card-pipe { background: white; padding: 15px 20px; border-radius: 12px; flex-grow: 1; border: 1px solid var(--slate-200); border-left: 5px solid var(--color); transition: 0.3s; }
+        .step.active .card-pipe { transform: translateX(10px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .details { max-height: 0; overflow: hidden; opacity: 0; transition: 0.3s; font-size: 0.8rem; color: #64748b; }
+        .step.active .details { max-height: 100px; opacity: 1; padding-top: 10px; margin-top: 10px; border-top: 1px solid #f1f5f9; }
+
+        @media (max-width: 1000px) { .cards-grid { grid-template-columns: repeat(2, 1fr); } .simulator-wrapper { grid-template-columns: 1fr; height: auto; } }
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <div class="container">
+            <span class="badge">Architecture & Development</span>
+            <h1>Full Stack & Deployment</h1>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="simulator-wrapper">
+            <div class="mobile-viewport">
+                <div class="iphone">
+                    <div class="screen">
+                        <div class="header-bar"><span class="fb-logo">facebook</span><i class="fas fa-bars" style="color: #65676b"></i></div>
+                        <div style="flex:1; padding:15px; display:flex; flex-direction:column; justify-content:center;">
+                            <div style="background:white; padding:15px; border-radius:10px;">
+                                <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=300" style="width:100%; border-radius:5px; margin-bottom:10px;">
+                                <div class="like-btn" id="l-btn" onclick="runProcess()">
+                                    <i class="fas fa-thumbs-up"></i> Like <span id="count">42</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="system-viewport" id="canvas">
+                <div class="node" id="n-ui" style="left: 10%; top: 20%;"><b>Client UI</b></div>
+                <div class="node" id="n-be" style="left: 45%; top: 20%;"><b>Backend</b></div>
+                <div class="node" id="n-db" style="left: 75%; top: 20%;"><b>Database</b></div>
+                <div class="console" id="msg-log">> System Ready...</div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <p>User Interface Layer</p>
+            <h2>Frontend</h2>
+        </div>
+        <div class="cards-grid">
+            <div class="card-concept c-put"><div class="card-header"><span>HTML</span><span class="type-badge">Structure</span></div><div class="card-body"><div class="code-box">&lt;button&gt;Like&lt;/button&gt;</div>Defines what exists on the page.<span class="analogy">🧠 Like a dataset schema.</span></div></div>
+            <div class="card-concept c-post"><div class="card-header"><span>CSS</span><span class="type-badge">Styling</span></div><div class="card-body"><div class="code-box">.btn { color: blue; }</div>Controls design and layout.<span class="analogy">🎨 Like visualization styling.</span></div></div>
+            <div class="card-concept c-js"><div class="card-header"><span>JavaScript</span><span class="type-badge">Logic</span></div><div class="card-body"><div class="code-box">onClick => fetch()</div>Handles interactions and APIs.<span class="analogy">⚡ Like ML pipeline logic.</span></div></div>
+            <div class="card-concept c-get"><div class="card-header"><span>Components</span><span class="type-badge">Reusable</span></div><div class="card-body"><div class="code-box">&lt;PostCard /&gt;</div>Reusable building blocks.<span class="analogy">🧩 Like reusable functions.</span></div></div>
+            <div class="card-concept c-patch"><div class="card-header"><span>Frameworks</span><span class="type-badge">Scaling</span></div><div class="card-body"><div class="code-box">React / Vue</div>Organize complex apps.<span class="analogy">🚀 Like ML pipelines at scale.</span></div></div>
+        </div>
+
+        <div class="section-header">
+            <p>Server & Data Layer</p>
+            <h2>Backend</h2>
+        </div>
+        <div class="cards-grid">
+            <div class="card-concept c-get"><div class="card-header"><span>Languages</span><span class="type-badge">Logic</span></div><div class="card-body"><div class="code-box">Python / Node</div>Write server-side logic.<span class="analogy">🧠 Like your ML scripts.</span></div></div>
+            <div class="card-concept c-post"><div class="card-header"><span>Frameworks</span><span class="type-badge">Structure</span></div><div class="card-body"><div class="code-box">Django / Express</div>Provide structure for APIs.<span class="analogy">⚙️ Like ML pipelines.</span></div></div>
+            <div class="card-concept c-put"><div class="card-header"><span>Database</span><span class="type-badge">Storage</span></div><div class="card-body"><div class="code-box">SQL / NoSQL</div>Stores user and app data.<span class="analogy">💾 Like your datasets.</span></div></div>
+            <div class="card-concept c-patch"><div class="card-header"><span>CRUD</span><span class="type-badge">Operations</span></div><div class="card-body"><div class="code-box">Create Read Update Delete</div>Basic data operations.<span class="analogy">🔄 Like manipulation steps.</span></div></div>
+            <div class="card-concept c-delete"><div class="card-header"><span>API</span><span class="type-badge">Comm</span></div><div class="card-body"><div class="code-box">POST /api/like</div>Connects FE with BE.<span class="analogy">🌐 Bridge between UI and model.</span></div></div>
+        </div>
+
+        <div class="section-header">
+            <p>Communication Protocol</p>
+            <h2>API Methods: "Tuning the Signal"</h2>
+        </div>
+        <div class="cards-grid">
+            <div class="card-concept c-get">
+                <div class="card-header"><span>GET</span><span class="type-badge">Fetch</span></div>
+                <div class="card-body">
+                    <div class="code-box">GET /api/products</div>
+                    Retrieve info without changing anything.
+                    <span class="analogy">✅ Safe to call.</span>
+                </div>
+            </div>
+            <div class="card-concept c-post">
+                <div class="card-header"><span>POST</span><span class="type-badge">Create</span></div>
+                <div class="card-body">
+                    <div class="code-box">POST /api/users</div>
+                    Add a brand new resource to the archive.
+                    <span class="analogy">➕ Add new resource.</span>
+                </div>
+            </div>
+            <div class="card-concept c-put">
+                <div class="card-header"><span>PUT</span><span class="type-badge">Update</span></div>
+                <div class="card-body">
+                    <div class="code-box">PUT /api/users/123</div>
+                    Modify an existing resource completely.
+                    <span class="analogy">🔄 Full resource update.</span>
+                </div>
+            </div>
+            <div class="card-concept c-patch">
+                <div class="card-header"><span>PATCH</span><span class="type-badge">Partial</span></div>
+                <div class="card-body">
+                    <div class="code-box">PATCH /api/users/123</div>
+                    Apply partial edits to a resource.
+                    <span class="analogy">📝 Partial edit.</span>
+                </div>
+            </div>
+            <div class="card-concept c-delete">
+                <div class="card-header"><span>DELETE</span><span class="type-badge">Remove</span></div>
+                <div class="card-body">
+                    <div class="code-box">DELETE /api/users/123</div>
+                    Permanently remove a resource.
+                    <span class="analogy">❌ Remove resource.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <p>DevOps Journey</p>
+            <h2>Deployment Pipeline</h2>
+        </div>
+        <div class="deployment-section">
+            <div class="pipeline">
+                <div class="step active" style="--color: #3b82f6;" onclick="toggleStep(this)"><div class="dot"></div><div class="card-pipe"><h3>Project</h3><p>Local Code</p><div class="details">Code written and tested on your machine.</div></div></div>
+                <div class="step" style="--color: #f97316;" onclick="toggleStep(this)"><div class="dot"></div><div class="card-pipe"><h3>Dockerfile</h3><p>The Recipe</p><div class="details">Instructions on how to build your app environment.</div></div></div>
+                <div class="step" style="--color: #22c55e;" onclick="toggleStep(this)"><div class="dot"></div><div class="card-pipe"><h3>Docker Image</h3><p>The Package</p><div class="details">A portable snapshot of your app and its tools.</div></div></div>
+                <div class="step" style="--color: #ef4444;" onclick="toggleStep(this)"><div class="dot"></div><div class="card-pipe"><h3>Cloud Hub</h3><p>Registry</p><div class="details">Where your image is stored for servers to download.</div></div></div>
+                <div class="step" style="--color: #10b981;" onclick="toggleStep(this)"><div class="dot"></div><div class="card-pipe"><h3>Live App</h3><p>Production</p><div class="details">Your app is running and accessible to everyone!</div></div></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let processing = false;
+        function log(msg) { const l = document.getElementById('msg-log'); l.innerHTML += `<br>> ${msg}`; l.scrollTop = l.scrollHeight; }
+        
+        async function move(text, fromId, toId) {
+            return new Promise(res => {
+                const canvas = document.getElementById('canvas');
+                const start = document.getElementById(fromId).getBoundingClientRect();
+                const end = document.getElementById(toId).getBoundingClientRect();
+                const cRect = canvas.getBoundingClientRect();
+                const p = document.createElement('div');
+                p.className = 'packet'; p.innerText = text;
+                p.style.left = (start.left - cRect.left + 50) + 'px'; p.style.top = (start.top - cRect.top + 20) + 'px';
+                canvas.appendChild(p);
+                setTimeout(() => { p.style.left = (end.left - cRect.left + 50) + 'px'; p.style.top = (end.top - cRect.top + 20) + 'px'; }, 50);
+                setTimeout(() => { p.remove(); res(); }, 800);
+            });
+        }
+
+        async function runProcess() {
+            if(processing) return; processing = true;
+            const btn = document.getElementById('l-btn');
+            const count = document.getElementById('count');
+            btn.classList.toggle('active');
+            count.innerText = parseInt(count.innerText) + (btn.classList.contains('active') ? 1 : -1);
+
+            log("Frontend: Triggering POST /api/like");
+            await move("POST", "n-ui", "n-be");
+            log("Backend: Validating and updating state");
+            await move("UPDATE", "n-be", "n-db");
+            log("Database: Save successful");
+            await move("200 OK", "n-be", "n-ui");
+            log("System: View Synchronized");
+            processing = false;
+        }
+
+        function toggleStep(el) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            el.classList.add('active');
+        }
+    </script>
+</body>
+</html>

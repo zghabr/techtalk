@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Backend Concepts</title>
+<style>
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f5f7fb;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+  }
+
+  h1 {
+    margin: 0;
+    color: #2d3748;
+  }
+
+  .subtitle {
+    color: #0f172a;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+
+  .divider {
+    margin: 20px 0;
+    height: 1px;
+    background: #e2e8f0;
+  }
+
+  .center {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .center h2 {
+    margin: 0;
+    font-size: 32px;
+    color: #2d3748;
+  }
+
+  .center p {
+    color: #718096;
+    margin-top: 10px;
+    font-size: 16px;
+  }
+
+  .cards {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .card {
+    flex: 1;
+    min-width: 220px;
+    border-radius: 14px;
+    background: white;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    overflow: hidden;
+    border: 2px solid transparent;
+  }
+
+  .card-header {
+    padding: 16px;
+    font-weight: bold;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .card-body {
+    padding: 16px;
+    font-size: 14px;
+    color: #4a5568;
+  }
+
+  .code {
+    background: #edf2f7;
+    padding: 10px;
+    border-radius: 8px;
+    font-family: monospace;
+    margin-bottom: 10px;
+  }
+
+  /* Colors */
+  .languages { border-color: #22c55e; }
+  .languages .card-header { background: #22c55e; }
+
+  .frameworks { border-color: #3b82f6; }
+  .frameworks .card-header { background: #3b82f6; }
+
+  .database { border-color: #f97316; }
+  .database .card-header { background: #f97316; }
+
+  .crud { border-color: #a855f7; }
+  .crud .card-header { background: #a855f7; }
+
+  .api { border-color: #ef4444; }
+  .api .card-header { background: #ef4444; }
+
+  .badge {
+    font-size: 12px;
+    opacity: 0.8;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <h1>Backend</h1>
+  <div class="subtitle">SERVER & DATA LAYER</div>
+  <div class="divider"></div>
+
+  <div class="center">
+    <h2>Backend: "Where Logic Meets Data"</h2>
+    <p>The backend processes requests, runs logic, and communicates with databases.</p>
+  </div>
+
+  <div class="cards">
+
+    <!-- Languages -->
+    <div class="card languages">
+      <div class="card-header">
+        <span>Languages</span>
+        <span class="badge">LOGIC</span>
+      </div>
+      <div class="card-body">
+        <div class="code">Python / JS / Java</div>
+        <p>Used to write server logic and handle requests.</p>
+        <p>🧠 Like your ML scripts.</p>
+      </div>
+    </div>
+
+    <!-- Frameworks -->
+    <div class="card frameworks">
+      <div class="card-header">
+        <span>Frameworks</span>
+        <span class="badge">STRUCTURE</span>
+      </div>
+      <div class="card-body">
+        <div class="code">Django / Express</div>
+        <p>Provide structure for building scalable APIs.</p>
+        <p>⚙️ Like ML pipelines.</p>
+      </div>
+    </div>
+
+    <!-- Database -->
+    <div class="card database">
+      <div class="card-header">
+        <span>Database</span>
+        <span class="badge">STORAGE</span>
+      </div>
+      <div class="card-body">
+        <div class="code">SQL / NoSQL</div>
+        <p>Stores user data, results, and application state.</p>
+        <p>💾 Like your datasets.</p>
+      </div>
+    </div>
+
+    <!-- CRUD -->
+    <div class="card crud">
+      <div class="card-header">
+        <span>CRUD</span>
+        <span class="badge">OPERATIONS</span>
+      </div>
+      <div class="card-body">
+        <div class="code">Create Read Update Delete</div>
+        <p>Basic operations for managing data.</p>
+        <p>🔄 Like data manipulation steps.</p>
+      </div>
+    </div>
+
+    <!-- API -->
+    <div class="card api">
+      <div class="card-header">
+        <span>API</span>
+        <span class="badge">COMMUNICATION</span>
+      </div>
+      <div class="card-body">
+        <div class="code">/api/users</div>
+        <p>Connects frontend with backend logic.</p>
+        <p>🌐 Like a bridge between UI and model.</p>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

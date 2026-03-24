@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vertical Deployment Flow</title>
+    <style>
+        :root {
+            --primary: #1877f2;
+            --bg: #f0f4f8;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-dim: #64748b;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pipeline {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        /* The Vertical Connecting Line */
+        .pipeline::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #cbd5e1;
+            border-radius: 2px;
+            z-index: 0;
+        }
+
+        .step {
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        /* The Dot on the line */
+        .dot {
+            width: 24px;
+            height: 24px;
+            background: white;
+            border: 4px solid #cbd5e1;
+            border-radius: 50%;
+            margin-left: 17px;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .dot {
+            border-color: var(--color);
+            background: var(--color);
+            box-shadow: 0 0 15px var(--color);
+        }
+
+        /* The Content Card */
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 16px;
+            flex-grow: 1;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-left: 5px solid var(--color);
+        }
+
+        .step:hover .card {
+            transform: translateX(10px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        .step.active .card {
+            background: var(--color);
+            color: white;
+            transform: translateX(15px) scale(1.02);
+        }
+
+        .card h3 {
+            margin: 0 0 5px 0;
+            font-size: 18px;
+        }
+
+        .card p {
+            margin: 0;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Explanation Text */
+        .details {
+            max-height: 0;
+            overflow: hidden;
+            font-size: 13px;
+            line-height: 1.5;
+            transition: all 0.4s ease;
+            opacity: 0;
+            padding-top: 0;
+        }
+
+        .step.active .details {
+            max-height: 100px;
+            opacity: 1;
+            padding-top: 15px;
+            margin-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.3);
+        }
+
+        /* Step Colors */
+        .s1 { --color: #3b82f6; } /* Blue */
+        .s2 { --color: #f97316; } /* Orange */
+        .s3 { --color: #22c55e; } /* Green */
+        .s4 { --color: #ef4444; } /* Red */
+        .s5 { --color: #a855f7; } /* Purple */
+        .s6 { --color: #0ea5e9; } /* Light Blue */
+        .s7 { --color: #10b981; } /* Teal */
+
+    </style>
+</head>
+<body>
+
+    
+
+    <div class="title">Deployment Journey</div>
+
+    <div class="pipeline">
+        
+        <div class="step s1" onclick="toggleStep(this)">
+            <div class="dot"></div>
+            <div class="card">
+                <h3>Project</h3>
+                <p>Local Codebase</p>
+                <div class="details">The foundation. Your application code is written and tested locally before the journey begins.</div>
+            </div>
+        </div>
+
+        <div class="step s2" onclick="toggleStep(this)">
+            <div class="dot"></div>
+            <div class="card">
+                <h3>Dockerfile</h3>
+                <p>The Recipe</p>
+                <div class="details">A blueprint containing all the OS, libraries, and environment settings your app needs to run.</div>
+            </div>
+        </div>
+
+        <div class="step s3" onclick="toggleStep(this)">
+            <div class="dot"></div>
+            <div class="card">
+                <h3>Docker Image</h3>
+                <p>The Package</p>
+                <div class="details">Your app and the Dockerfile recipe are baked together into a single, portable executable file.</div>
+            </div>
+        </div>
+
+        <div class="step s4" onclick="toggleStep(this)">
+            <div class="dot"></div>
+            <div class="card">
+                <h3>Docker Hub</h3>
+                <p>Registry Storage</p>
+                <div class="details">Your image is uploaded to the cloud so it can be accessed by deployment servers anywhere.</div>
+            </div>
+        </div>
+
+        <div class="step s5" onclick="toggleStep(this)">
+            <div class="dot"></div>
+            <div class="card">
+                <h3>Render</h3>
+                <p>Cloud Platform</p>
+                <div class="details">The host platform detects the new image and prepares the infrastructure to serve your app.</div>
+            </div>
+        </div>
+
+        <div class="step s6" onclick="toggleStep(this)">
+            <div class="dot"></div>
+            <div class="card">
+                <h3>Container</h3>
+                <p>Live Instance</p>
+                <div class="details">A "running" version of your image is created on the server, consuming resources and handling logic.</div>
+            </div>
+        </div>
+
+        <div class="step s7" onclick="toggleStep(this)">
+            <div class="dot"></div>
+            <div class="card">
+                <h3>Live App</h3>
+                <p>World Accessible</p>
+                <div class="details">Your deployment is complete! Users can now access the app via a public URL.</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleStep(element) {
+            const isActive = element.classList.contains('active');
+            
+            // Close all
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active');
+            });
+
+            // Toggle clicked
+            if (!isActive) {
+                element.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

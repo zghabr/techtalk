@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>From Click to Cloud: Architecture Guide</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        :root {
+            --fb-blue: #1877f2;
+            --fb-bg: #f0f2f5;
+            --slate-50: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --slate-800: #1e293b;
+            --slate-900: #0f172a;
+            --accent-blue: #3b82f6;
+            --phone-width: 320px;
+            --phone-height: 620px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: white;
+            color: var(--slate-900);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+
+        /* HERO SECTION */
+        .hero {
+            padding: 80px 0 40px 0;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(241,245,249,0.8)), 
+                        url('https://static.vecteezy.com/system/resources/previews/050/442/116/large_2x/modern-data-center-with-server-racks-and-blue-led-lights-for-cloud-computing-and-data-storage-photo.jpg');
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: var(--fb-blue);
+            color: white;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; letter-spacing: -1px; }
+        .subtitle { font-size: 1.2rem; color: #64748b; max-width: 600px; margin: 0 auto 2rem auto; }
+
+        /* SIMULATOR SECTION */
+        .simulator-wrapper {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 2rem;
+            overflow: hidden;
+            height: 750px;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
+        }
+
+        /* LEFT SIDE: MOBILE (The User) */
+        .mobile-viewport {
+            background: var(--slate-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid var(--slate-200);
+        }
+
+        .iphone {
+            width: 280px;
+            height: 560px;
+            background: #000;
+            border-radius: 3rem;
+            padding: 10px;
+            position: relative;
+            box-shadow: 0 30px 60px -15px rgba(0,0,0,0.2);
+            border: 3px solid #334155;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: var(--fb-bg);
+            border-radius: 2.4rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-bar {
+            background: white;
+            padding: 25px 14px 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .fb-logo { color: var(--fb-blue); font-weight: 800; font-size: 1.3rem; }
+        
+        .feed { flex: 1; overflow-y: auto; padding: 10px; }
+        .feed::-webkit-scrollbar { display: none; }
+
+        .card { background: white; border-radius: 10px; padding: 10px; margin-bottom: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .author { font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; }
+        .card-content { font-size: 0.75rem; color: #334155; margin-bottom: 8px; }
+        .card-img { width: 100%; border-radius: 6px; margin-bottom: 8px; height: 120px; object-fit: cover; }
+        
+        .like-btn { 
+            display: flex; align-items: center; justify-content: center; gap: 6px; 
+            font-size: 0.75rem; font-weight: 700; color: #64748b; cursor: pointer;
+            padding: 8px; border-top: 1px solid #f1f5f9; transition: all 0.2s ease;
+        }
+        .like-btn.active { color: var(--fb-blue); }
+        .like-btn.active i { transform: scale(1.2); }
+
+        /* RIGHT SIDE: THE CLOUD (The Machine) */
+        .system-viewport {
+            background: #0f172a;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .node {
+            position: absolute;
+            width: 160px;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            color: white;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .node i { font-size: 1.5rem; color: var(--accent-blue); margin-bottom: 8px; display: block; }
+        .node b { display: block; font-size: 0.85rem; margin-bottom: 4px; color: white; }
+        .node span { font-size: 0.7rem; color: #94a3b8; line-height: 1.2; display: block; }
+
+        .packet {
+            position: absolute;
+            padding: 4px 10px;
+            background: var(--accent-blue);
+            color: white;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            font-weight: 700;
+            border-radius: 4px;
+            z-index: 50;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+        }
+
+        .console {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 250px;
+            background: rgba(2, 6, 23, 0.98);
+            border-top: 3px solid #3b82f6;
+            padding: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            overflow-y: auto;
+            color: #e2e8f0;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+        }
+
+        .log-line { margin-bottom: 8px; line-height: 1.4; border-left: 3px solid transparent; padding-left: 12px; }
+        .log-frontend { border-left-color: var(--fb-blue); color: #93c5fd; }
+        .log-backend { border-left-color: #f59e0b; color: #fcd34d; }
+        .log-database { border-left-color: #10b981; color: #6ee7b7; }
+        .log-remove { border-left-color: #ef4444; color: #fca5a5; }
+        
+        /* New Separator Style */
+        .log-separator {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #334155, transparent);
+            margin: 15px 0;
+            border: none;
+        }
+
+        /* DATA SECTION */
+        .explanation-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .explanation-box {
+            padding: 2rem;
+            background: #fff;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-200);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+
+        .explanation-box h3 { font-size: 1.2rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 10px; }
+        .explanation-box p { color: #64748b; font-size: 0.9rem; }
+        .step-num { 
+            background: var(--fb-blue); color: white; width: 24px; height: 24px; 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem;
+        }
+
+        @media (max-width: 900px) {
+            .simulator-wrapper { grid-template-columns: 1fr; height: auto; }
+            .explanation-grid { grid-template-columns: 1fr; }
+            .system-viewport { height: 400px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <div class="container">
+            <span class="badge">Architecture Demo</span>
+            <h1>The Journey of a "Like"</h1>
+            <p class="subtitle">Experience how a simple toggle syncs your screen with the global cloud database.</p>
+        </div>
+    </header>
+
+    <section class="container">
+        <div class="simulator-wrapper">
+            <!-- THE USER -->
+            <div class="mobile-viewport">
+                <div class="iphone">
+                    <div class="screen">
+                        <div class="header-bar">
+                            <span class="fb-logo">facebook</span>
+                            <i class="fas fa-bars" style="color: #65676b"></i>
+                        </div>
+                        <div class="feed">
+                            <!-- POST 1 -->
+                            <div class="card" id="post-4976c6">
+                                <div class="author">Architecture for Everyone</div>
+                                <div class="card-content">Demo post 1: The basics of data flow.</div>
+                                <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=400&q=80" class="card-img" />
+                                <div class="like-btn" onclick="runProcess('post-4976c6')">
+                                    <i class="fas fa-thumbs-up"></i> Like <span class="count">10</span>
+                                </div>
+                            </div>
+                            <!-- POST 2 -->
+                            <div class="card" id="post-3f1f83">
+                                <div class="author">Cloud Engineering Daily</div>
+                                <div class="card-content">Demo post 2: Observe how the backend handles unique identifiers!</div>
+                                <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=400&q=80" class="card-img" />
+                                <div class="like-btn" onclick="runProcess('post-3f1f83')">
+                                    <i class="fas fa-thumbs-up"></i> Like <span class="count">24</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- THE CLOUD -->
+            <div class="system-viewport" id="canvas">
+                <div class="node" id="node-user" style="left: 10%; top: 25%;">
+                    <i class="fas fa-user"></i>
+                    <b>The User</b>
+                    <span>Current session</span>
+                </div>
+
+                <div class="node" id="node-security" style="left: 42%; top: 10%;">
+                    <i class="fas fa-user-shield"></i>
+                    <b>Security Guard</b>
+                    <span>Authentication</span>
+                </div>
+
+                <div class="node" id="node-brain" style="left: 42%; top: 40%;">
+                    <i class="fas fa-brain"></i>
+                    <b>The Brain</b>
+                    <span>Application Logic</span>
+                </div>
+
+                <div class="node" id="node-storage" style="left: 75%; top: 25%;">
+                    <i class="fas fa-folder-open"></i>
+                    <b>Filing Cabinet</b>
+                    <span>The Database</span>
+                </div>
+
+                <div class="console" id="msg-log">
+                    <div style="color: #64748b;">[System Idle] Waiting for interaction...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="explanation-grid">
+            <div class="explanation-box">
+                <h3><span class="step-num">1</span> Frontend Logic</h3>
+                <p>The app toggles the state locally first. This "Optimistic" approach makes the app feel incredibly fast to the user.</p>
+            </div>
+            <div class="explanation-box">
+                <h3><span class="step-num">2</span> State Management</h3>
+                <p>The server receives the toggle request and determines if it needs to "Increment" (+1) or "Decrement" (-1) the total.</p>
+            </div>
+            <div class="explanation-box">
+                <h3><span class="step-num">3</span> Atomic Updates</h3>
+                <p>The database performs an atomic update to ensure that even if millions of people like at once, the math stays correct.</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        let isProcessing = false;
+        // Keep track of liked state for each post
+        const likedStates = {
+            'post-4976c6': false,
+            'post-3f1f83': false
+        };
+
+        function getPos(id) {
+            const el = document.getElementById(id);
+            const rect = el.getBoundingClientRect();
+            const canvasRect = document.getElementById('canvas').getBoundingClientRect();
+            return { 
+                x: rect.left - canvasRect.left + (rect.width / 2), 
+                y: rect.top - canvasRect.top + (rect.height / 2) 
+            };
+        }
+
+        function log(text, className) {
+            const l = document.getElementById('msg-log');
+            const div = document.createElement('div');
+            div.className = `log-line ${className}`;
+            div.innerText = `> ${text}`;
+            l.appendChild(div);
+            l.scrollTop = l.scrollHeight;
+        }
+
+        function logSeparator() {
+            const l = document.getElementById('msg-log');
+            const hr = document.createElement('div');
+            hr.className = 'log-separator';
+            l.appendChild(hr);
+            l.scrollTop = l.scrollHeight;
+        }
+
+        async function moveMsg(text, from, to) {
+            return new Promise(res => {
+                const canvas = document.getElementById('canvas');
+                const p = document.createElement('div');
+                p.className = 'packet';
+                p.innerText = text;
+                const start = getPos(from);
+                p.style.left = start.x + 'px';
+                p.style.top = start.y + 'px';
+                canvas.appendChild(p);
+
+                setTimeout(() => {
+                    const end = getPos(to);
+                    p.style.left = (end.x - 40) + 'px';
+                    p.style.top = (end.y - 10) + 'px';
+                }, 50);
+
+                setTimeout(() => { p.remove(); res(); }, 800);
+            });
+        }
+
+        async function runProcess(postId) {
+            if(isProcessing) return;
+            isProcessing = true;
+
+            const postEl = document.getElementById(postId);
+            const btn = postEl.querySelector('.like-btn');
+            const countEl = btn.querySelector('.count');
+            
+            const currentlyLiked = likedStates[postId];
+            const action = currentlyLiked ? 'REMOVE' : 'ADD';
+            const shortId = postId.split('-')[1];
+            
+            // Step 1: Frontend Optimistic Update
+            if (!currentlyLiked) {
+                btn.classList.add('active');
+                countEl.innerText = parseInt(countEl.innerText) + 1;
+                log(`Frontend: [Post ${shortId}] Adding like locally (+1)`, "log-frontend");
+            } else {
+                btn.classList.remove('active');
+                countEl.innerText = parseInt(countEl.innerText) - 1;
+                log(`Frontend: [Post ${shortId}] Removing like locally (-1)`, "log-frontend");
+            }
+            
+            log(`Frontend: Sending POST /like-post { post_id: "${shortId}", action: "${action}" }`, "log-frontend");
+
+            // Step 2: Backend Security Check
+            await moveMsg(action, "node-user", "node-security");
+            log(`Backend: Validating session for interaction on Post ${shortId}...`, "log-backend");
+            
+            // Step 3: Logic Processing
+            await moveMsg("Validated", "node-security", "node-brain");
+            if (action === 'ADD') {
+                log(`Backend: Logic check - Incremented total for Post ${shortId}.`, "log-backend");
+            } else {
+                log(`Backend: Logic check - Decremented total for Post ${shortId}.`, "log-remove");
+            }
+
+            // Step 4: Database Update
+            await moveMsg("Update DB", "node-brain", "node-storage");
+            if (action === 'ADD') {
+                log(`Database: UPDATE posts SET likes = likes + 1 WHERE id = '${shortId}'`, "log-database");
+            } else {
+                log(`Database: UPDATE posts SET likes = likes - 1 WHERE id = '${shortId}'`, "log-remove");
+            }
+            log("Database: Write successful.", "log-database");
+
+            // Step 5: Return Trip
+            await moveMsg("ACK 200", "node-storage", "node-user");
+            log(`Frontend: API success. State synchronized for Post ${shortId}.`, "log-frontend");
+
+            // Added Separator
+            logSeparator();
+
+            likedStates[postId] = !currentlyLiked;
+            isProcessing = false;
+        }
+    </script>
+</body>
+</html>

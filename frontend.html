@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Frontend Concepts</title>
+<style>
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f5f7fb;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+  }
+
+  h1 {
+    margin: 0;
+    color: #2d3748;
+  }
+
+  .subtitle {
+    color: #1877f2;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+
+  .divider {
+    margin: 20px 0;
+    height: 1px;
+    background: #e2e8f0;
+  }
+
+  .center {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .center h2 {
+    margin: 0;
+    font-size: 32px;
+    color: #2d3748;
+  }
+
+  .center p {
+    color: #718096;
+    margin-top: 10px;
+    font-size: 16px;
+  }
+
+  .cards {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .card {
+    flex: 1;
+    min-width: 220px;
+    border-radius: 14px;
+    background: white;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    overflow: hidden;
+    border: 2px solid transparent;
+  }
+
+  .card-header {
+    padding: 16px;
+    font-weight: bold;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .card-body {
+    padding: 16px;
+    font-size: 14px;
+    color: #4a5568;
+  }
+
+  .code {
+    background: #edf2f7;
+    padding: 10px;
+    border-radius: 8px;
+    font-family: monospace;
+    margin-bottom: 10px;
+  }
+
+  .highlight {
+    background: #e2e8f0;
+  }
+
+  /* Colors */
+  .html { border-color: #f97316; }
+  .html .card-header { background: #f97316; }
+
+  .css { border-color: #3b82f6; }
+  .css .card-header { background: #3b82f6; }
+
+  .js { border-color: #facc15; }
+  .js .card-header { background: #facc15; color: black; }
+
+  .components { border-color: #22c55e; }
+  .components .card-header { background: #22c55e; }
+
+  .frameworks { border-color: #a855f7; }
+  .frameworks .card-header { background: #a855f7; }
+
+  .badge {
+    font-size: 12px;
+    opacity: 0.8;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <h1>Frontend</h1>
+  <div class="subtitle">WEB APPLICATION LAYER</div>
+  <div class="divider"></div>
+
+  <div class="center">
+    <h2>Frontend: "Where Users Meet Your Model"</h2>
+    <p>The frontend is the interface that collects input, triggers logic, and displays results.</p>
+  </div>
+
+  <div class="cards">
+
+    <!-- HTML -->
+    <div class="card html">
+      <div class="card-header">
+        <span>HTML</span>
+        <span class="badge">STRUCTURE</span>
+      </div>
+      <div class="card-body">
+        <div class="code">&lt;input /&gt; &lt;button&gt;</div>
+        <p>Defines what exists on the page (inputs, buttons, layout).</p>
+        <p>🧠 Like a dataset schema.</p>
+      </div>
+    </div>
+
+    <!-- CSS -->
+    <div class="card css">
+      <div class="card-header">
+        <span>CSS</span>
+        <span class="badge">STYLING</span>
+      </div>
+      <div class="card-body">
+        <div class="code">color: blue;</div>
+        <p>Controls design, layout, spacing, and responsiveness.</p>
+        <p>🎨 Like data visualization styling.</p>
+      </div>
+    </div>
+
+    <!-- JS -->
+    <div class="card js">
+      <div class="card-header">
+        <span>JavaScript</span>
+        <span class="badge">LOGIC</span>
+      </div>
+      <div class="card-body">
+        <div class="code">onClick → fetch()</div>
+        <p>Handles interactions and connects to APIs.</p>
+        <p>⚡ Like your ML pipeline logic.</p>
+      </div>
+    </div>
+
+    <!-- Components -->
+    <div class="card components">
+      <div class="card-header">
+        <span>Components</span>
+        <span class="badge">REUSABLE</span>
+      </div>
+      <div class="card-body">
+        <div class="code">&lt;UserCard /&gt;</div>
+        <p>Reusable building blocks combining UI + logic.</p>
+        <p>🧩 Like reusable functions/models.</p>
+      </div>
+    </div>
+
+    <!-- Frameworks -->
+    <div class="card frameworks">
+      <div class="card-header">
+        <span>Frameworks</span>
+        <span class="badge">SCALING</span>
+      </div>
+      <div class="card-body">
+        <div class="code">React / Vue</div>
+        <p>Organize complex apps and manage state.</p>
+        <p>🚀 Like ML pipelines at scale.</p>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mobile System Design Demo</title>
+    <style>
+        :root {
+            --fb-blue: #1877f2;
+            --bg-gray: #f0f2f5;
+            --text-gray: #65676b;
+            --phone-width: 340px;
+            --phone-height: 700px;
+        }
+
+        body {
+            margin: 0;
+            font-family: Segoe UI, Helvetica, Arial, sans-serif;
+            background: #e2e8f0;
+            overflow: hidden;
+            display: flex;
+            height: 100vh;
+        }
+
+        /* LAYOUT DIVIDER */
+        .mobile-side {
+            width: 450px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #cbd5e1;
+            border-right: 2px solid #94a3b8;
+        }
+
+        .system-side {
+            flex-grow: 1;
+            position: relative;
+            background: #f8f9fa;
+        }
+
+        /* PHONE FRAME STYLING */
+        .phone-frame {
+            width: var(--phone-width);
+            height: var(--phone-height);
+            background: #111;
+            border-radius: 40px;
+            padding: 12px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            position: relative;
+            border: 4px solid #444;
+        }
+
+        /* Phone Notch */
+        .phone-frame::before {
+            content: "";
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 25px;
+            background: #111;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            z-index: 101;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: var(--bg-gray);
+            border-radius: 30px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* INTERNAL HEADER (Inside Mobile) */
+        .mobile-header {
+            background: white;
+            padding: 35px 15px 10px 15px; /* Extra top padding for notch */
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .logo-sm { color: var(--fb-blue); font-weight: bold; font-size: 22px; letter-spacing: -1px; }
+        .search-sm { background: #f0f2f5; border-radius: 20px; padding: 6px 12px; flex-grow: 1; border: none; font-size: 13px; outline: none; }
+
+        /* SCROLLABLE FEED */
+        #feed {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+            scrollbar-width: none;
+        }
+        #feed::-webkit-scrollbar { display: none; }
+
+        /* POST STYLING */
+        .post { background: white; border-radius: 8px; padding: 10px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .post-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .avatar { width: 32px; height: 32px; border-radius: 50%; background: #ddd; }
+        .name { font-weight: 600; font-size: 13px; }
+        .post-content { font-size: 13px; margin-bottom: 8px; }
+        .post-image { width: 100%; border-radius: 4px; margin-bottom: 8px; }
+        .post-video { width: 100%; border-radius: 4px; background: #000; }
+        
+        .engagement-stats { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 11px; color: var(--text-gray); }
+        .like-icon-circle { background: var(--fb-blue); color: white; border-radius: 50%; width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; font-size: 8px; margin-right: 4px; }
+        
+        .actions { display: flex; padding-top: 4px; }
+        .action-btn { flex: 1; text-align: center; font-size: 11px; font-weight: 600; color: var(--text-gray); cursor: pointer; padding: 4px; }
+        .action-btn.active { color: var(--fb-blue); }
+
+        /* SYSTEM NODES (Right Side) */
+        .node { position: absolute; background: white; border: 1px solid #cbd5e0; border-radius: 8px; padding: 10px; width: 160px; font-size: 11px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); z-index: 10; }
+        .node .title { font-weight: bold; border-bottom: 1px solid #edf2f7; margin-bottom: 8px; color: var(--fb-blue); }
+        pre { margin: 0; white-space: pre-wrap; font-family: monospace; color: #4a5568; font-size: 10px; }
+
+        /* Positions for Nodes */
+        #node-browser  { left: 5%;  top: 40%; border: 2px solid var(--fb-blue); } /* Highlights as "The Phone" */
+        #node-frontend { left: 25%; top: 15%; }
+        #node-api      { left: 45%; top: 40%; }
+        #node-backend  { left: 65%; top: 15%; }
+        #node-db       { left: 85%; top: 40%; }
+
+        .packet { position: absolute; padding: 6px 12px; background: var(--fb-blue); color: white; border-radius: 20px; font-size: 11px; font-weight: bold; transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); z-index: 50; pointer-events: none; }
+        
+        #log { position: absolute; bottom: 0; width: 100%; height: 120px; background: #1a202c; color: #63b3ed; font-family: monospace; padding: 12px; overflow-y: auto; box-sizing: border-box; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-side">
+        <div class="phone-frame">
+            <div class="phone-screen">
+                <div class="mobile-header">
+                    <div class="logo-sm">facebook</div>
+                    <input class="search-sm" placeholder="Search">
+                </div>
+                
+                <div id="feed">
+                    <div class="post" id="post-1">
+                        <div class="post-header">
+                            <div class="avatar" style="background: #1877f2;"></div>
+                            <div class="name">Code Jokes</div>
+                        </div>
+                        <div class="post-content">My code works, but I don't know why. 😅</div>
+                        <div class="engagement-stats">
+                            <span><span class="like-icon-circle">👍</span><span class="count">85</span></span>
+                        </div>
+                        <div class="actions">
+                            <div class="action-btn" onclick="handleUserLike('post-1', 'You')">👍 Like</div>
+                            <div class="action-btn">💬 Comment</div>
+                        </div>
+                    </div>
+
+                    <div class="post" id="post-2">
+                        <div class="post-header">
+                            <div class="avatar" style="background: #f27618;"></div>
+                            <div class="name">Video Creator</div>
+                        </div>
+                        <video class="post-video" controls onplay="handleVideoAction('START_STREAM')">
+                            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                        </video>
+                        <div class="engagement-stats">
+                            <span><span class="like-icon-circle">👍</span><span class="count">1,242</span></span>
+                            <span>4.2K Views</span>
+                        </div>
+                        <div class="actions">
+                            <div class="action-btn" onclick="handleUserLike('post-2', 'You')">👍 Like</div>
+                            <div class="action-btn">💬 Comment</div>
+                        </div>
+                    </div>
+
+                    <div class="post" id="post-3">
+                        <div class="post-header">
+                            <img class="avatar" src="https://i.pravatar.cc/100?u=travel" />
+                            <div class="name">Travel World</div>
+                        </div>
+                        <div class="post-content">Tokyo is incredible! 🇯🇵</div>
+                        <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=400&q=80" class="post-image" />
+                        <div class="engagement-stats">
+                            <span><span class="like-icon-circle">👍</span><span class="count">124</span></span>
+                        </div>
+                        <div class="actions">
+                            <div class="action-btn" onclick="handleUserLike('post-3', 'You')">👍 Like</div>
+                            <div class="action-btn">💬 Comment</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="system-side" id="canvas">
+        <div class="node" id="node-browser">
+            <div class="title">1. CLIENT (MOBILE)</div>
+            <pre id="data-browser">{}</pre>
+        </div>
+        <div class="node" id="node-frontend">
+            <div class="title">2. LOAD BALANCER</div>
+            <pre id="data-frontend">{}</pre>
+        </div>
+        <div class="node" id="node-api">
+            <div class="title">3. API GATEWAY</div>
+            <pre id="data-api">{}</pre>
+        </div>
+        <div class="node" id="node-backend">
+            <div class="title">4. MICROSERVICE</div>
+            <pre id="data-backend">{}</pre>
+        </div>
+        <div class="node" id="node-db">
+            <div class="title">5. DATABASE</div>
+            <pre id="data-db">{}</pre>
+        </div>
+
+        <div id="log"></div>
+    </div>
+
+    <script>
+        let isAnimating = false;
+
+        function getPos(id) {
+            const el = document.getElementById(id);
+            const rect = el.getBoundingClientRect();
+            // Get center position relative to the system-side canvas
+            const canvasRect = document.getElementById('canvas').getBoundingClientRect();
+            return { 
+                x: rect.left - canvasRect.left + (rect.width / 2), 
+                y: rect.top - canvasRect.top + (rect.height / 2) 
+            };
+        }
+
+        function updateNodeData(id, data) {
+            document.getElementById(`data-${id}`).innerText = JSON.stringify(data, null, 1);
+        }
+
+        function log(msg) {
+            const l = document.getElementById("log");
+            l.innerHTML += `> ${msg}<br>`;
+            l.scrollTop = l.scrollHeight;
+        }
+
+        async function handleUserLike(postId, userName) {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            const postEl = document.getElementById(postId);
+            const btn = postEl.querySelector('.action-btn');
+            const countEl = postEl.querySelector('.count');
+            btn.classList.add('active');
+
+            const canvas = document.getElementById('canvas');
+            const p = document.createElement('div');
+            p.className = 'packet';
+            p.innerText = 'POST /like';
+
+            const start = getPos('node-browser');
+            p.style.left = start.x + 'px';
+            p.style.top = start.y + 'px';
+            canvas.appendChild(p);
+
+            // Flow
+            updateNodeData('browser', { user: userName, action: "like", target: postId });
+            log(`Mobile App: ${userName} liked ${postId}`);
+
+            await movePacket(p, 'node-frontend');
+            updateNodeData('frontend', { routing_to: "api-v1" });
+
+            await movePacket(p, 'node-api');
+            updateNodeData('api', { auth: "valid", rate_limit: "pass" });
+
+            await movePacket(p, 'node-backend');
+            updateNodeData('backend', { logic: "increment_like" });
+
+            await movePacket(p, 'node-db');
+            let current = parseInt(countEl.innerText.replace(/,/g, ''));
+            countEl.innerText = (current + 1).toLocaleString();
+            updateNodeData('db', { status: "success" });
+
+            p.innerText = "200 OK";
+            p.style.background = "#42b72a";
+            await movePacket(p, 'node-browser');
+
+            p.remove();
+            isAnimating = false;
+        }
+
+        async function handleVideoAction(action) {
+            log(`Video stream requested: ${action}`);
+            const canvas = document.getElementById('canvas');
+            const p = document.createElement('div');
+            p.className = 'packet';
+            p.style.background = "#f3425f";
+            p.innerText = "GET /stream";
+            
+            const start = getPos('node-browser');
+            p.style.left = start.x + 'px'; p.style.top = start.y + 'px';
+            canvas.appendChild(p);
+
+            await movePacket(p, 'node-frontend');
+            await movePacket(p, 'node-api');
+            await movePacket(p, 'node-backend');
+            
+            p.innerText = "STREAMING...";
+            setTimeout(() => p.remove(), 1000);
+        }
+
+        function movePacket(packet, targetId) {
+            return new Promise(res => {
+                const pos = getPos(targetId);
+                packet.style.left = (pos.x - 40) + 'px'; // Offset for center
+                packet.style.top = (pos.y - 15) + 'px';
+                setTimeout(res, 700);
+            });
+        }
+    </script>
+</body>
+</html>
